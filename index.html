@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>障害年金相談：重症筋無力症（眼筋型）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f4; /* Stone 100 - Warm Neutral */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .active-tab {
+            border-bottom: 2px solid #57534e; /* Stone 600 */
+            color: #292524; /* Stone 800 */
+            font-weight: 700;
+        }
+        .inactive-tab {
+            color: #78716c; /* Stone 500 */
+        }
+        .inactive-tab:hover {
+            color: #44403c; /* Stone 700 */
+        }
+    </style>
+    <!-- Chosen Palette: Stone (Warm Neutrals) with Slate Blue Accents for Trust/Medical context. -->
+    <!-- Application Structure Plan: 
+         1. Dashboard Header: Context of the inquiry.
+         2. Response Generator (The Core): A dedicated section presenting the drafted reply text, allowing the user (Sharoushi) to review the final output first.
+         3. Analysis & Logic Section (The Support):
+            - Eligibility Assessment: Interactive checklist specific to Ocular MG to gauge application difficulty.
+            - Pros/Cons Visualizer: Dynamic cards explaining benefits/risks.
+            - Strategy Chart: A chart showing the weight of different application documents (Doctor's note vs. Patient history).
+         4. Navigation: Tab-based system to switch between the textual reply and the analytical visual aids.
+         This structure allows the Sharoushi to quickly get the text they need while also having deep-dive visual aids to explain the situation if the client asks for more details later.
+    -->
+    <!-- Visualization & Content Choices:
+         - Response Area: Text block with copy functionality. Goal: Immediate utility.
+         - Assessment Gauge (HTML/JS): Custom visual bar. Goal: Inform about the nuance of "Ocular type" vs "Generalized". Justification: Chart.js is overkill for a 1-axis scale, HTML is cleaner.
+         - Merit/Demerit Cards (Grid): Goal: Compare. Text-heavy info presented in digestable chunks.
+         - "Approval Factor" Chart (Chart.js Doughnut): Goal: Relationships. Shows that the Doctor's Certificate is the biggest factor, emphasizing the "Careful Point".
+         - Timeline (HTML/Tailwind): Goal: Change/Process. Shows the flow from First Visit to Application.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="text-stone-700">
+
+    <!-- Main Container -->
+    <div class="max-w-4xl mx-auto min-h-screen bg-white shadow-2xl overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <header class="bg-stone-800 text-stone-100 p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h1 class="text-2xl font-bold">障害年金 受給要件分析</h1>
+                    <p class="text-stone-400 text-sm mt-1">対象：重症筋無力症（眼筋型） / 依頼者：お母様</p>
+                </div>
+                <div class="mt-4 md:mt-0 bg-stone-700 px-4 py-2 rounded-full text-xs font-mono">
+                    Case ID: MG-Ocular-001
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex border-b border-stone-200 bg-stone-50 sticky top-0 z-10">
+            <button onclick="switchTab('reply')" id="tab-reply" class="flex-1 py-4 text-center transition-colors active-tab">
+                1. 返信案作成
+            </button>
+            <button onclick="switchTab('analysis')" id="tab-analysis" class="flex-1 py-4 text-center transition-colors inactive-tab">
+                2. 要件・制度詳細
+            </button>
+            <button onclick="switchTab('strategy')" id="tab-strategy" class="flex-1 py-4 text-center transition-colors inactive-tab">
+                3. 重要ポイント
+            </button>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+
+            <!-- SECTION 1: REPLY DRAFT -->
+            <section id="section-reply" class="animate-fade-in block">
+                
+                <div class="bg-white border border-stone-200 rounded-lg p-6 shadow-sm relative">
+                    <h2 class="text-lg font-bold text-stone-800 mb-4">LINE/メール用 返信ドラフト</h2>
+                    <textarea id="replyText" class="w-full h-96 p-4 text-stone-700 bg-stone-50 border border-stone-300 rounded focus:ring-2 focus:ring-stone-400 focus:outline-none text-sm leading-relaxed" readonly>
+【① 対象となる病気？】
+対象になり得ます。
+ただし、実際に申請できるのは原則「20歳になってから」です。
+20歳になった時点で、眼筋型による複視（二重に見える）やまぶたの症状、全身の疲れやすさが日常生活にどの程度影響しているかで判断されます。
+
+【② メリット・デメリット】
+●メリット：
+20歳以降、就労に制限が出た場合などの経済的な支えになります。
+また、20歳より前の病気の場合、年金保険料を納めていなくても対象になる（納付要件が問われない）という利点があります。
+
+●デメリット：
+年金をもらうこと自体のデメリットは基本的にありません（会社に知られることも通常ありません）。
+ただし、今回のようなケース（20歳前傷病）特有の点として、将来ご本人に高額な収入（目安として給与年収で約518万円以上※）がある年は、年金の支給が一部または全額停止される「所得制限」があります。
+※扶養親族がいない場合の令和6年度基準（所得額370.4万円超）
+
+【③ 気をつけること】
+将来20歳で申請する際、「初めて病院に行った日（今現在）」の証明が必要になります。
+数年後にカルテが破棄されてしまったり、転院で記録が追えなくなったりしないよう、領収書やお薬手帳を大切に保管し、継続的に受診しておくことが重要です。</textarea>
+                    
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="copyToClipboard()" class="bg-stone-800 hover:bg-stone-700 text-white font-bold py-2 px-6 rounded flex items-center gap-2 transition-transform active:scale-95">
+                            <span>📋 テキストをコピー</span>
+                        </button>
+                    </div>
+                    <div id="copyFeedback" class="absolute bottom-20 right-6 bg-green-100 text-green-800 text-xs px-2 py-1 rounded opacity-0 transition-opacity">
+                        コピーしました！
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: ANALYSIS (ELIGIBILITY & PROS/CONS) -->
+            <section id="section-analysis" class="hidden">
+
+                <!-- Eligibility Checker -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-stone-800 mb-4 border-b pb-2">1. 認定可能性チェック（眼筋型の特徴）</h3>
+                    <p class="text-sm text-stone-600 mb-4">重症筋無力症は難病指定されていますが、障害年金は「全身型」の方が認定されやすい傾向にあります。「眼筋型」の場合、以下の症状の強度が鍵となります。</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg border border-stone-200">
+                            <h4 class="font-bold text-sm mb-3 text-stone-600">症状チェックリスト</h4>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-stone-50 rounded">
+                                    <input type="checkbox" onchange="updateGauge()" class="form-checkbox h-5 w-5 text-stone-600 symptom-check" value="20">
+                                    <span class="text-sm">両眼の眼瞼下垂（まぶたが下がる）が顕著</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-stone-50 rounded">
+                                    <input type="checkbox" onchange="updateGauge()" class="form-checkbox h-5 w-5 text-stone-600 symptom-check" value="20">
+                                    <span class="text-sm">複視（二重に見える）による生活支障</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-stone-50 rounded">
+                                    <input type="checkbox" onchange="updateGauge()" class="form-checkbox h-5 w-5 text-stone-600 symptom-check" value="30">
+                                    <span class="text-sm">夕方になると症状が悪化する（日内変動）</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-stone-50 rounded">
+                                    <input type="checkbox" onchange="updateGauge()" class="form-checkbox h-5 w-5 text-stone-600 symptom-check" value="30">
+                                    <span class="text-sm">嚥下障害や四肢の脱力感も時々ある</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="bg-stone-100 p-4 rounded-lg flex flex-col justify-center items-center text-center">
+                            <h4 class="font-bold text-sm mb-2 text-stone-600">想定される認定ハードル</h4>
+                            <div class="w-full bg-stone-300 rounded-full h-4 mb-4 relative">
+                                <div id="gauge-bar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 10%;"></div>
+                            </div>
+                            <p id="gauge-text" class="text-lg font-bold text-stone-700">情報不足</p>
+                            <p id="gauge-desc" class="text-xs text-stone-500 mt-2">チェックを入れて判定目安を表示</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pros/Cons Cards -->
+                <div>
+                    <h3 class="text-xl font-bold text-stone-800 mb-4 border-b pb-2">2. メリット・デメリット対比（20歳前傷病）</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Merits -->
+                        <div class="bg-white border-t-4 border-teal-500 rounded p-4 card-shadow">
+                            <h4 class="font-bold text-teal-700 mb-2 flex items-center">
+                                <span class="text-xl mr-2">●</span> 申請のメリット
+                            </h4>
+                            <ul class="text-sm space-y-2 text-stone-600 list-disc list-inside">
+                                <li><strong>経済的自立:</strong> 20歳到達日より障害基礎年金を受給できる可能性。</li>
+                                <li><strong>納付要件不要:</strong> 20歳前の初診のため、保険料納付済期間が問われない。</li>
+                                <li><strong>社会参加:</strong> 治療費の負担軽減や、無理のない働き方の選択肢が増える。</li>
+                            </ul>
+                        </div>
+                        <!-- Demerits -->
+                        <div class="bg-white border-t-4 border-rose-500 rounded p-4 card-shadow">
+                            <h4 class="font-bold text-rose-700 mb-2 flex items-center">
+                                <span class="text-xl mr-2">▲</span> 留意点（デメリット）
+                            </h4>
+                            <ul class="text-sm space-y-2 text-stone-600 list-disc list-inside">
+                                <li><strong>所得制限:</strong> 本人の前年所得が約370万円（給与年収目安 518万円）を超えると半額停止、約472万円（同 645万円）を超えると全額停止。<br><span class="text-xs text-stone-500 ml-5">※単身世帯の場合。扶養親族がいると上限額は上がります。</span></li>
+                                <li><strong>証明の維持:</strong> 20歳になるまで受診間隔が空きすぎないよう注意が必要。</li>
+                                <li><strong>更新の手間:</strong> 症状固定でない限り、数年ごとの更新手続きが必要。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: STRATEGY (CHARTS) -->
+            <section id="section-strategy" class="hidden">
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Chart 1: Importance weighting -->
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-800 mb-4 text-center">審査における重要度ウェイト</h3>
+                        <p class="text-xs text-stone-500 mb-2 text-center">「気をつけること」＝医師への伝え方です</p>
+                        <div class="chart-container">
+                            <canvas id="importanceChart"></canvas>
+                        </div>
+                        <div class="mt-4 bg-stone-100 p-3 rounded text-xs text-stone-600">
+                            <strong>解説:</strong> 診断書が決定打となりますが、眼筋型のような自覚症状（疲れやすさ等）が見えにくい疾患は、「病歴・就労状況等申立書」での補足と、医師への正確な症状伝達（診断書への反映）の整合性が不可欠です。
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Flow & Pitfalls -->
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-stone-800 mb-4 text-center">申請プロセスの落とし穴</h3>
+                        <div class="chart-container">
+                            <canvas id="processChart"></canvas>
+                        </div>
+                        <div class="mt-4 bg-stone-100 p-3 rounded text-xs text-stone-600">
+                            <strong>解説:</strong> 
+                            <ul class="list-disc ml-4">
+                                <li><strong>初診日:</strong> 眼科か内科か？特定が難しいケースあり。</li>
+                                <li><strong>認定日請求:</strong> 症状が固定していなかった場合、事後重症請求への切り替え判断が必要。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deep Dive Text for Caution -->
+                <div class="mt-8 bg-white p-6 rounded-lg border border-stone-200">
+                    <h3 class="font-bold text-stone-800 mb-2">眼筋型MG特有の注意点</h3>
+                    <p class="text-sm text-stone-600 leading-relaxed">
+                        眼筋型は、「ものが二重に見える」「まぶたが下がる」といった症状が中心ですが、これらは<strong>「労働能力の喪失」</strong>として数値化されにくい側面があります。<br>
+                        視力や視野の検査結果だけでなく、「複視により事務作業が継続できない」「通勤に支障がある」といった<strong>日常生活能力の低下</strong>を具体的に医師に伝え、診断書の備考欄などに記載してもらう工夫が必要です。
+                    </p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'reply',
+            symptomScore: 0
+        };
+
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            // Update State
+            state.currentTab = tabId;
+
+            // Hide all sections
+            ['reply', 'analysis', 'strategy'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('active-tab');
+                document.getElementById(`tab-${id}`).classList.add('inactive-tab');
+            });
+
+            // Show selected section
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            
+            // Update Tab Styles
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            activeTabBtn.classList.remove('inactive-tab');
+            activeTabBtn.classList.add('active-tab');
+
+            // Trigger Chart Render if Strategy Tab (to handle responsiveness correctly on show)
+            if (tabId === 'strategy') {
+                renderCharts();
+            }
+        }
+
+        // --- Interactive Gauge Logic ---
+        function updateGauge() {
+            const checks = document.querySelectorAll('.symptom-check');
+            let total = 0;
+            checks.forEach(check => {
+                if (check.checked) total += parseInt(check.value);
+            });
+
+            const bar = document.getElementById('gauge-bar');
+            const text = document.getElementById('gauge-text');
+            const desc = document.getElementById('gauge-desc');
+
+            // Visual update
+            // Ensure minimum width so bar is visible
+            const displayWidth = Math.max(10, total);
+            bar.style.width = `${displayWidth}%`;
+
+            // Text update logic
+            if (total === 0) {
+                bar.className = "bg-stone-300 h-4 rounded-full transition-all duration-500";
+                text.innerText = "情報不足";
+                text.className = "text-lg font-bold text-stone-500";
+                desc.innerText = "症状をチェックしてください";
+            } else if (total <= 40) {
+                bar.className = "bg-yellow-400 h-4 rounded-full transition-all duration-500";
+                text.innerText = "要検討（難易度：高）";
+                text.className = "text-lg font-bold text-yellow-600";
+                desc.innerText = "眼症状のみの場合、3級（厚生年金）または不支給の可能性があります。";
+            } else if (total <= 70) {
+                bar.className = "bg-blue-400 h-4 rounded-full transition-all duration-500";
+                text.innerText = "申請の価値あり";
+                text.className = "text-lg font-bold text-blue-600";
+                desc.innerText = "生活支障が具体的であれば認定の可能性があります。";
+            } else {
+                bar.className = "bg-teal-500 h-4 rounded-full transition-all duration-500";
+                text.innerText = "認定可能性：高";
+                text.className = "text-lg font-bold text-teal-700";
+                desc.innerText = "全身への影響または著しい眼症状が見受けられます。";
+            }
+        }
+
+        // --- Copy Functionality ---
+        function copyToClipboard() {
+            const copyText = document.getElementById("replyText");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                const feedback = document.getElementById("copyFeedback");
+                feedback.classList.remove("opacity-0");
+                setTimeout(() => {
+                    feedback.classList.add("opacity-0");
+                }, 2000);
+            });
+        }
+
+        // --- Chart Generation ---
+        let chartsInitialized = false;
+
+        function renderCharts() {
+            if (chartsInitialized) return;
+            
+            // Chart 1: Importance Weighting (Doughnut)
+            const ctx1 = document.getElementById('importanceChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['医師の診断書', '病歴・就労状況等申立書', '初診日証明', 'その他'],
+                    datasets: [{
+                        data: [60, 25, 10, 5],
+                        backgroundColor: [
+                            '#0d9488', // Teal 600
+                            '#f59e0b', // Amber 500
+                            '#64748b', // Slate 500
+                            '#d6d3d1'  // Stone 300
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Success Factors (Bar Chart as process visualization)
+            // Visualizing the "Effort" vs "Impact" of specific pitfalls
+            const ctx2 = document.getElementById('processChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['初診日の特定', '医師への伝達', '書類の整合性', '年金機構の審査'],
+                    datasets: [{
+                        label: '難易度・重要度',
+                        data: [80, 90, 85, 60], // Conceptual values
+                        backgroundColor: '#78716c', // Stone 500
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { display: false },
+                            grid: { display: false }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const tips = [
+                                        "古いカルテがないと証明困難",
+                                        "自覚症状を数値化して伝える難しさ",
+                                        "申立書と診断書の矛盾はNG",
+                                        "不支給決定後の審査請求は大変"
+                                    ];
+                                    return tips[context.dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            chartsInitialized = true;
+        }
+
+        // Initialize with first tab active logic (though HTML sets structure, ensuring state matches)
+        switchTab('reply');
+
+    </script>
+</body>
+</html>
