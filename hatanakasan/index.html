@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>障害年金相談記録 - 畑中哲也様</title>
+    <style>
+        /* ベーススタイル */
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* ヘッダー周り */
+        header {
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #0056b3;
+            margin: 0;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* セクション共通 */
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 18px;
+            background-color: #eef4fa;
+            padding: 10px 15px;
+            border-left: 5px solid #0056b3;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 20px;
+        }
+
+        /* 基本情報テーブル */
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .profile-table th, .profile-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-table th {
+            width: 30%;
+            background-color: #fafafa;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* タイムライン（受診歴） */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid #ddd;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: #0056b3;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .timeline-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .alert-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* 就労状況・生活状況 */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .status-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        .status-card h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #444;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .status-card ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .status-card li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* 専門家の所見エリア */
+        .conclusion-box {
+            border: 2px solid #dc3545;
+            background-color: #fff8f8;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .conclusion-title {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .reason-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .reason-list li {
+            margin-bottom: 10px;
+        }
+
+        .next-action {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #dc3545;
+        }
+
+        .tag-danger {
+            background-color: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>障害年金 相談記録概要</h1>
+        [cite_start]<span class="date">面談日：2026年1月13日 [cite: 2]</span>
+    </header>
+
+    <section>
+        <h2>基本情報</h2>
+        <table class="profile-table">
+            <tr>
+                <th>氏名</th>
+                [cite_start]<td>畑中 哲也 様 [cite: 1]</td>
+            </tr>
+            <tr>
+                <th>現在の受診</th>
+                [cite_start]<td>藤枝メンタルクリニック（昨年夏前頃〜）[cite: 4, 6]</td>
+            </tr>
+            <tr>
+                <th>就労状況</th>
+                [cite_start]<td>一般就労（週3〜4日 / 夜勤あり）[cite: 53, 55]</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>受診歴と初診日の特定</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">現在（昨年夏前〜）</div>
+                <div class="timeline-content">
+                    <h3>藤枝メンタルクリニック</h3>
+                    [cite_start]<p>勤務先利用者との鉢合わせを避けるため転院 [cite: 14]。</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">前医（約10年間）</div>
+                <div class="timeline-content">
+                    <h3>藤枝駿府病院</h3>
+                    [cite_start]<p>千葉帰省時の精神状態悪化・保護を契機に入院・通院 [cite: 18, 22]。</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-date">前々医（2〜3年）</div>
+                <div class="timeline-content">
+                    <h3>愛知県春日井市 駅前の病院</h3>
+                    [cite_start]<p>病院名不明 [cite: 26, 28]。</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-date">初診の可能性（時期不明）</div>
+                <div class="timeline-content">
+                    <h3>静岡県清水市 駅前クリニック</h3>
+                    [cite_start]<p>医師他界により閉院済み。名称記憶なし [cite: 34]。</p>
+                    <div class="alert-box">
+                        [cite_start]<strong>重要課題：</strong>この時期はパートナー等の扶養で生活しており、年金未納の可能性が高い [cite: 45, 49]。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>現在の生活・就労状況</h2>
+        <div class="status-grid">
+            <div class="status-card">
+                <h3>就労状況（一般雇用）</h3>
+                <ul>
+                    [cite_start]<li>勤務先：障がい者グループホーム [cite: 14]</li>
+                    [cite_start]<li>勤続：約2年（一昨年2月〜）[cite: 63]</li>
+                    [cite_start]<li>勤務形態：週3〜4日 [cite: 57]</li>
+                    [cite_start]<li><strong>特記事項：16〜18時間の夜勤に従事 [cite: 55]</strong></li>
+                    [cite_start]<li>職場での特別な配慮：なし [cite: 53]</li>
+                </ul>
+            </div>
+            <div class="status-card">
+                <h3>日常生活能力</h3>
+                <ul>
+                    [cite_start]<li>仕事はこなせている [cite: 67]</li>
+                    [cite_start]<li>家庭内の家事・片付け等は困難 [cite: 67]</li>
+                    [cite_start]<li>一人暮らしではない（パートナーと同居歴あり）[cite: 45]</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="conclusion-box">
+            <div class="conclusion-title">社労士による所見と方針</div>
+            <p><strong>現状での受給難易度：極めて高い（申請困難）</strong></p>
+            <ul class="reason-list">
+                [cite_start]<li><span class="tag-danger">納付要件</span> 初診日（清水市）時点で未納期間である可能性が高い [cite: 73]。</li>
+                [cite_start]<li><span class="tag-danger">初診日</span> 病院名不明・閉院済みのため証明が困難 [cite: 76]。</li>
+                [cite_start]<li><span class="tag-danger">障害状態</span> 夜勤を含む長時間労働が可能なため、2級・3級の基準（労働に著しい制限がある状態）に該当しない可能性が高い [cite: 78]。</li>
+            </ul>
+            
+            <div class="next-action">
+                <strong>今後の対応（Next Action）：</strong><br>
+                [cite_start]ご本人による初診日調査（年金事務所・病院への確認）を依頼 [cite: 110][cite_start]。状況の変化（就労不能など）があった場合に再検討を行う [cite: 113][cite_start]。LINEにて本日のまとめを送付済み [cite: 121]。
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
